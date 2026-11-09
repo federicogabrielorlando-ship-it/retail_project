@@ -1,8 +1,12 @@
 # retail_project
 
-Pre-entrega 2 del curso de SQL de Coderhouse: tablas principales con restricciones y carga inicial de datos.
+Repositorio de las pre-entregas del curso de SQL de Coderhouse, sobre la base `retail_project` de una tienda de mascotas.
 
-El script `retail_project.sql` crea la base `retail_project` con tres tablas de una tienda de mascotas:
+## Pre-entrega 2: tablas principales con restricciones y datos iniciales
+
+Archivo: `retail_project.sql`
+
+Crea la base `retail_project` con tres tablas:
 
 - `clientes`: clave primaria, email único y obligatorio, edad mayor o igual a 18.
 - `productos`: clave primaria `SERIAL`, precio `DECIMAL` mayor a 0 y stock no negativo.
@@ -10,22 +14,31 @@ El script `retail_project.sql` crea la base `retail_project` con tres tablas de 
 
 Después carga 6 registros por tabla dentro de un `BEGIN ... COMMIT`, sube un 10% los precios de la categoría Alimentos con un `UPDATE` y borra una venta de prueba con un `DELETE`. Las dos operaciones usan `WHERE`.
 
+## Pre-entrega 4: consultas multicapa para análisis de negocio
+
+Archivo: `pre-entrega-modulo4.sql`
+
+Primero prepara los datos: crea la tabla `categorias`, la conecta con `productos` por clave foránea, agrega una clienta sin compras y algunas ventas de octubre y noviembre. Después tiene tres consultas comentadas:
+
+1. **Rentabilidad por categoría**: une `ventas`, `productos` y `categorias`, y muestra unidades e ingreso de las categorías que superan $50.000 (filtro con `HAVING`).
+2. **Clientes sin compras**: `LEFT JOIN` entre `clientes` y `ventas` para encontrar a los que nunca compraron, con `COALESCE` para mostrar 0 en lugar de NULL.
+3. **Top de compras por cliente**: une `clientes`, `ventas` y `productos`; muestra el total gastado, el producto que más veces compró cada cliente y la fecha de su última compra.
+
 ## Cómo ejecutarlo
 
-Con PostgreSQL instalado (lo probé en la versión 16).
+Con PostgreSQL instalado (lo probé en la versión 16). El orden importa: la pre-entrega 4 usa las tablas que crea la 2.
 
 **Desde la terminal (psql):**
 
 ```
 psql -U postgres -f retail_project.sql
+psql -U postgres -d retail_project -f pre-entrega-modulo4.sql
 ```
-
-El script crea la base, se conecta con `\c retail_project` y ejecuta todo lo demás.
 
 **Desde pgAdmin o DBeaver:**
 
 1. Ejecutar solo la línea `CREATE DATABASE retail_project;`.
-2. Abrir una consulta nueva conectada a `retail_project`.
-3. Pegar y ejecutar el resto del script, desde el punto 2 (la línea `\c` es solo para psql, se puede borrar).
+2. Abrir una consulta conectada a `retail_project` y ejecutar el resto de `retail_project.sql` (la línea `\c` es solo para psql, se puede borrar).
+3. En la misma conexión, ejecutar `pre-entrega-modulo4.sql`.
 
-El script empieza con `DROP TABLE IF EXISTS`, así que se puede correr más de una vez sin errores.
+Si se quiere volver a correr la pre-entrega 4, conviene correr antes `retail_project.sql`, que deja la base otra vez con los datos iniciales.
